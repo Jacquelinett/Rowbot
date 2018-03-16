@@ -34,6 +34,8 @@ function undo() {
         }
     }
 
+    lastAction.matrix.display();
+
 }
 
 function redo() {
@@ -61,6 +63,8 @@ function redo() {
             lastAction.matrix.content[lastAction.values.from][i] = temp[i];
         }
     }
+
+    lastAction.matrix.display();
 }
 
 function getGCD(a, b) {
@@ -166,6 +170,10 @@ class Matrix {
             this.content[to][i] = this.content[from][i];
             this.content[from][i] = temp[i];
         }
+
+        redoStack = [];
+        
+        this.display();
     }
 
     doOperation(to, op, top, bottom) {
@@ -192,6 +200,8 @@ class Matrix {
         let newAction = new MAction(0, this, to, previous);
         undoStack.push(newAction);
         redoStack = [];
+
+        this.display();
     }
 
     rowOperation(to, op, from) {
@@ -218,6 +228,8 @@ class Matrix {
         let newAction = new MAction(0, this, to, previous);
         undoStack.push(newAction);
         redoStack = [];
+
+        this.display();
     }
 }
 
