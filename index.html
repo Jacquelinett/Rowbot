@@ -9,9 +9,41 @@
         <title>Matrix</title>
 
         <!--<link href="style.css" rel="stylesheet">-->
+        <style>
+            body {
+                width: 600px;
+            }
+        </style>
 
     </head>
     <body>
+        To access the console, right click on the page, choose Inspect. A tab will pop up, click on console on the tab
+        If you get here, you should see a 5x5 matrix printed out.
+
+        <br><br>To play with the matrix, possibles options are:
+
+
+        <br><br>test.rowOperation(row being operated on (0 - 4 representing the row index), a number 0-3, representing add/subtract/mult./division respectively, row data taken from)
+        <br>Example: test.rowOperation(2, 1, 4) -> Row 3 (index 2) is being subtracted by row 5 (index 4)
+
+        <br><br>test.doOperation(row being operated on, operation (0-3 add/sub/mul/div), numerator of number, denominator of number (CAN BE IGNORED))
+        <br>Example: test.doOperation(1, 3, 2, 3) -> Divide row 2 (index 1) by 2/3
+        <br>Example: test.doOperation(0, 1, 1) -> Subtract row 1 (index 0) by 1
+
+        <br><br>test.swapRow(a row (0-4), another row(0-4))
+        <br>Example: test.swapRow(2,3) // Swap row 1 (index 2) and row 2 (index 3)
+
+        <br><br>undo() : pretty self-explanatory
+        <br> Example: undo() // Literally
+        <br>redo() : pretty self-explanatory. NOTE: Everytime you do something to the matrix, the redo stack get cleared
+        <br> Example: redo() // Literally
+
+        
+        <br><br><br><br>If needed (this isn't implemented yet so there is no undo for this), you can change individual matrix's number by:
+        <br>test.content[row index (0-4)][column index (0-4)] = new MNumber(top,bottom (can be ignored))
+        <br>Example: test.content[0][0] = new MNumber(6,4) //Change row 1 column 1 (index 0,0) to a fraction (6/4) (reduced automatically by the code to 3/2)
+        <br>test.content[0][0] = new MNumber(6) // Change row 1 column 1 to 6
+
         <script src="rowbot.js"></script>
     </body>
 </html>
