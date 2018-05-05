@@ -88,7 +88,7 @@ class MNumber {
 		const gcd = getGCD(this.top, this.bottom);
 		
 		this.top /= gcd;
-		this.bottom /= gcd;
+        this.bottom /= gcd;
 	}
 	
 	displayValue() {
@@ -248,6 +248,9 @@ function getNumber(text) {
     let top = 1;
     let bot = 1;
 
+    if (text.length == 0 || isNaN(text[1]))
+        return new MNumber(1);
+
     let divIndex = text.indexOf("/");
     if (divIndex > 0)
         return new MNumber(parseInt(text.substring(0, divIndex)), text.substring(divIndex + 1));
@@ -320,6 +323,7 @@ class MatrixViewer {
                     if (uniqueVariables.indexOf(rows[r][c]) < 0)
                         uniqueVariables += rows[r][c];
 
+                    console.log(rows[r].substring(0, c));
                     let num = getNumber(rows[r].substring(0, c));
                     if (lastNeg) {
                         lastNeg = false;
@@ -363,6 +367,37 @@ class MatrixViewer {
         }
 
         this.matrix.display();
+        this.displayMatrix();
+    }
+
+    displayMatrix() {
+        this.table.innerHTML = "";
+
+        for (let y = -1; y < this.matrix.row; y++) {
+            this.table.insertRow();
+            
+            for (let x = 0; x < this.matrix.column; x++) {
+                this.table.rows[y + 1].insertCell();
+                if (y == -1) {
+                    if (x == this.matrix.variable.length)
+                        this.table.rows[y + 1].cells[x].innerHTML = "&emsp; | &emsp; =";
+                    else
+                        this.table.rows[y + 1].cells[x].innerHTML = this.matrix.variable[x];
+                }
+                else {
+                    this.table.rows[y + 1].cells[x].innerHTML = "";
+                    
+                    let num = this.matrix.content[y][x];
+                    
+                    if (x == this.matrix.variable.length)
+                        this.table.rows[y + 1].cells[x].innerHTML += "&emsp; | &emsp; ";
+                    if (num.bottom == 1)
+                        this.table.rows[y + 1].cells[x].innerHTML += num.top;
+                    else
+                        this.table.rows[y + 1].cells[x].innerHTML += "<sup>" + num.top + "</sup> &frasl; <sub>" + num.bottom + "</sub>";
+                }
+            }
+        }
     }
 }
 

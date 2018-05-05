@@ -6,12 +6,16 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
         <title>Matrix</title>
 
         <!--<link href="style.css" rel="stylesheet">-->
         <style>
             body {
-                width: 600px;
+                width: 800px;
+                font-family: 'Roboto', sans-serif;
+                font-size: 18px;
             }
 
             table {
@@ -20,32 +24,26 @@
                 padding-left: 30px;
             }
 
+            table td {
+                padding-left: 15px;
+            }
+
+            textarea {
+                font-size: 18px;
+            }
+
         </style>
 
     </head>
     <body>
         <div style="display: inline-block;">
-            <textarea id="matrixInput" rows="15" cols="50" placeholder="Enter your equations"></textarea>
+            <textarea id="matrixInput" rows="10" cols="30" placeholder="Enter your equations"></textarea>
             <br>
             <button onclick="parse()">Parse</button>
         </div>
 
         <table id="matrix">
-            <tr>
-                <th>Firstname</th>
-                <th>Lastname</th> 
-                <th>Age</th>
-            </tr>
-            <tr>
-                <td>Jill</td>
-                <td>Smith</td> 
-                <td>50</td>
-            </tr>
-            <tr>
-                <td>Eve</td>
-                <td>Jackson</td> 
-                <td>94</td>
-            </tr>
+
         </table>
 
         <script src="rowbot.js"></script>
