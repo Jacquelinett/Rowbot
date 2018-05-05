@@ -138,10 +138,11 @@ class MNumber {
 }
 
 class Matrix {
-	constructor(row, column, result) {
+	constructor(row, column, result, variable) {
 		this.row = row;
 		this.column = column;
-		this.result = result;
+        this.result = result;
+        this.variable = variable;
 		
 		this.content = new Array(row);
 		for (let i = 0; i < row; i++) {
@@ -151,8 +152,10 @@ class Matrix {
 	
 	display() {
 		for (let r = 0; r < this.row; r++) {
-            var text = "[";
+            let text = "[";
 			for (let c = 0; c < this.column; c++) {
+                if (this.result && c == this.column - 1)
+                    text += "| ";
 				text += this.content[r][c].displayValue() + " ";
             }
             text += "]";
@@ -204,23 +207,31 @@ class Matrix {
         this.display();
     }
 
-    rowOperation(to, op, from) {
+    rowOperation(to, op, from, multop, mulbot) {
         let previous = [];
+
+        if (typeof multop === 'undefined') {
+            mul = 1;
+        }
+
+        if (typeof mulbot === 'undefined') {
+            mul = 1;
+        }
 
         for (let i = 0; i < this.column; i++) {
             previous[i] = new MNumber(this.content[to][i].top, this.content[to][i].bottom);
             switch (op) {
             case 0: // Add
-                this.content[to][i].add(this.content[from][i].top, this.content[from][i].bottom);
+                this.content[to][i].add(this.content[from][i].top * multop, this.content[from][i].bottom * mulbot);
                 break;
             case 1: // Subtract
-                this.content[to][i].add(-this.content[from][i].top, this.content[from][i].bottom);
+                this.content[to][i].add(-this.content[from][i].top * multop, this.content[from][i].bottom * mulbot);
                 break;
             case 2: // Mult.
-                this.content[to][i].multiply(this.content[from][i].top, this.content[from][i].bottom);
+                this.content[to][i].multiply(this.content[from][i].top * multop, this.content[from][i].bottom * mulbot);
                 break;
             case 3: // Division.
-                this.content[to][i].divide(this.content[from][i].top, this.content[from][i].bottom);
+                this.content[to][i].divide(this.content[from][i].top * multop, this.content[from][i].bottom * mulbot);
                 break;
             }
         }
@@ -233,7 +244,135 @@ class Matrix {
     }
 }
 
-const test = new Matrix(5, 5, false);
+function getNumber(text) {
+    let top = 1;
+    let bot = 1;
+
+    let divIndex = text.indexOf("/");
+    if (divIndex > 0)
+        return new MNumber(parseInt(text.substring(0, divIndex)), text.substring(divIndex + 1));
+    else
+        return new MNumber(parseInt(text));
+
+    return null;
+}
+
+class MatrixViewer {
+    constructor(table) {
+        this.table = table;
+    }
+
+    parseData(input) {
+        let rows = input.split("\n");
+        let uniqueVariables = "";
+
+        let dictionary = new Array(rows.length);
+
+        let haveResult = false;
+        let result = new Array();
+        
+        for (let r = 0; r < rows.length; r++) {
+            dictionary[r] = new Array();
+            let lastOp = true; // This is to check if there is an operator between two numbers
+            let lastNeg = false;
+
+            rows[r].replace(/ /g,''); // Remove all white space
+
+            for (let c = 0; c < rows[r].length; c++) {
+                if (rows[r][c] === '+' || rows[r][c] === "-") {
+                    if (lastOp) {
+                        console.log("ERROR BAD FORMAT");
+                        return;
+                    }
+                    lastOp = true;
+                    
+                    if (rows[r][c] === '-')
+                        lastNeg = true;
+
+                    rows[r] = rows[r].substring(c + 1); //remove the stuff behind to start fresh
+                    c = -1;
+                }
+
+                else if (rows[r][c] === '=') {
+                    if (lastOp) {
+                        console.log("ERROR BAD FORMAT");
+                        return;
+                    }
+
+                    haveResult = true;
+                    rows[r] = rows[r].substring(c + 1);
+        
+                    let num = getNumber(rows[r]);
+                    if (typeof num === 'undefined') {
+                        console.log("ERROR BAD FORMAT");
+                        return;
+                    }
+
+                    result[r] = num;
+                }
+
+                else if (rows[r][c].match(/[a-z]/i)) {
+                    if (!lastOp) {
+                        console.log("ERROR BAD FORMAT");
+                        return;
+                    }
+
+                    if (uniqueVariables.indexOf(rows[r][c]) < 0)
+                        uniqueVariables += rows[r][c];
+
+                    let num = getNumber(rows[r].substring(0, c));
+                    if (lastNeg) {
+                        lastNeg = false;
+                        num.multiply(-1);
+                    }
+
+                    if (typeof dictionary[r][rows[r][c]] === 'undefined') {
+                        dictionary[r][rows[r][c]] = num;
+                    }
+                    else {
+                        dictionary[r][rows[r][c]].add(num);
+                    }
+                        
+
+                    rows[r] = rows[r].substring(c + 1);
+                    c = -1;
+                    lastOp = false;
+                }
+            }
+        }
+
+        this.matrix = new Matrix(rows.length, uniqueVariables.length + (haveResult ? 1 : 0), haveResult, uniqueVariables);
+
+        for (let y = 0; y < rows.length; y++) {
+            for (let x = 0; x < uniqueVariables.length; x++) {
+                if (typeof dictionary[y][uniqueVariables[x]] === 'undefined') 
+                    this.matrix.content[y][x] = new MNumber(0);
+                
+                else
+                    this.matrix.content[y][x] = dictionary[y][uniqueVariables[x]];
+            }
+        }
+
+        if (haveResult) {
+            for (let i = 0; i < result.length; i++) {
+                if (typeof result[i] === 'undefined') 
+                    this.matrix.content[i][uniqueVariables.length] = new MNumber(0);
+                else
+                    this.matrix.content[i][uniqueVariables.length] = result[i];
+            }
+        }
+
+        this.matrix.display();
+    }
+}
+
+const viewer = new MatrixViewer(document.getElementById("matrix"));
+
+function parse() {
+    viewer.parseData(document.getElementById("matrixInput").value);
+}
+
+/*const test = new Matrix(5, 5, false, "");
 test.content[0][0] = new MNumber(1); 
 
 test.content[0][1] = new MNumber(1); test.content[0][2] = new MNumber(1); test.content[0][3] = new MNumber(1); test.content[0][4] = new MNumber(1);
@@ -246,4 +385,4 @@ test.content[3][0] = new MNumber(2); test.content[3][1] = new MNumber(1); test.c
 
 test.content[4][0] = new MNumber(1); test.content[4][1] = new MNumber(3); test.content[4][2] = new MNumber(1); test.content[4][3] = new MNumber(1); test.content[4][4] = new MNumber(1);
 
-test.display();
+test.display();*/
