@@ -284,7 +284,7 @@ class MatrixViewer {
             for (let c = 0; c < rows[r].length; c++) {
                 if (rows[r][c] === '+' || rows[r][c] === "-") {
                     if (lastOp) {
-                        console.log("ERROR BAD FORMAT");
+                        onErr("ERROR: Bad format");
                         return;
                     }
                     lastOp = true;
@@ -298,7 +298,7 @@ class MatrixViewer {
 
                 else if (rows[r][c] === '=') {
                     if (lastOp) {
-                        console.log("ERROR BAD FORMAT");
+                        onErr("ERROR: Bad format");
                         return;
                     }
 
@@ -307,7 +307,7 @@ class MatrixViewer {
         
                     let num = getNumber(rows[r]);
                     if (typeof num === 'undefined') {
-                        console.log("ERROR BAD FORMAT");
+                        onErr("ERROR: Bad format");
                         return;
                     }
 
@@ -316,14 +316,13 @@ class MatrixViewer {
 
                 else if (rows[r][c].match(/[a-z]/i)) {
                     if (!lastOp) {
-                        console.log("ERROR BAD FORMAT");
+                        onErr("ERROR: Bad format");
                         return;
                     }
 
                     if (uniqueVariables.indexOf(rows[r][c]) < 0)
                         uniqueVariables += rows[r][c];
 
-                    console.log(rows[r].substring(0, c));
                     let num = getNumber(rows[r].substring(0, c));
                     if (lastNeg) {
                         lastNeg = false;
@@ -402,6 +401,11 @@ class MatrixViewer {
 }
 
 const viewer = new MatrixViewer(document.getElementById("matrix"));
+
+function onErr(msg) {
+    document.getElementById("onErr").innerHTML = msg;
+    console.log("ERROR BAD FORMAT");
+}
 
 function parse() {
     viewer.parseData(document.getElementById("matrixInput").value);

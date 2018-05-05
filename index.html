@@ -32,6 +32,10 @@
                 font-size: 18px;
             }
 
+            #onErr {
+                color: red;
+            }
+
         </style>
 
     </head>
@@ -40,6 +44,7 @@
             <textarea id="matrixInput" rows="10" cols="30" placeholder="Enter your equations"></textarea>
             <br>
             <button onclick="parse()">Parse</button>
+            <p id="onErr"></p>
         </div>
 
         <table id="matrix">
