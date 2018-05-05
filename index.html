@@ -46,6 +46,24 @@
 
         </table>
 
+        <br><br>
+
+        <br>Updated UI, no UI for actual functionality yet, but parsing is done. Any variables name will work
+        <br>Known bug/feature: you can't add a negative number, if you want a negative number just subtract
+
+        <br><br>Example:
+        <br>2/3x + 7/4y + 9z - 4w = 4
+        <br>3y + 6z = 2
+        <br>1/3z -7x = 1
+        
+        <br><br>Functionality should still work in the terminal. But instead of test.doOperation(...) etc
+        <br>It is now replaced with viewer.matrix.doOperation(...)
+
+        <br><br> rowOperation(toRow, operation, fromRow) is now rowOperation(toRow, operation, fromRow, muliplyTop, multiplyBot)
+        <br> Where the row operation will multiply the row by multiply top/bot respectively
+        
+        <br><br> For previous instruction refer <a href="https://github.com/Jacquelinett/Rowbot/commit/f1426d9623beecdf4882b8e26decbb8067568624">here</a>
+
         <script src="rowbot.js"></script>
     </body>
 </html>
