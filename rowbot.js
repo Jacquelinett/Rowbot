@@ -248,7 +248,7 @@ function getNumber(text) {
     let top = 1;
     let bot = 1;
 
-    if (text.length == 0 || isNaN(text[1]))
+    if (text.length == 0 || !isNaN(text[1]))
         return new MNumber(1);
 
     let divIndex = text.indexOf("/");
